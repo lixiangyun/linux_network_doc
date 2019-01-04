@@ -13,7 +13,7 @@ Bridge（桥）是 Linux 上用来做 TCP/IP 二层协议交换的设备，与�
 
 图 1.Bridge 设备工作过程
 
-![](https://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/image003.jpg)
+![](source/1.jpg)
 
 如图所示，Bridge 的功能主要在内核里实现。当一个从设备被 attach 到 Bridge 上时，相当于现实世界里交换机的端口被插入了一根连有终端的网线。这时在内核程序里，netdev_rx_handler_register()被调用，一个用于接受数据的回调函数被注册。以后每当这个从设备收到数据时都会调用这个函数可以把数据转发到 Bridge 上。当 Bridge 接收到此数据时，br_handle_frame()被调用，进行一个和现实世界中的交换机类似的处理过程：判断包的类别（广播/单点），查找内部 MAC 端口映射表，定位目标端口号，将数据转发到目标端口或丢弃，自动更新内部 MAC 端口映射表以自我学习。
 
@@ -28,7 +28,7 @@ VLAN 又称虚拟网络，是一个被广泛使用的概念，有些应用程序
 
 图 2 .VLAN 设备工作过程
 
-![](https://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/image005.jpg)
+![](source/2.jpg)
 
 如图所示，Linux 里 802.1.q VLAN 设备是以母子关系成对出现的，母设备相当于现实世界中的交换机 TRUNK 口，用于连接上级网络，子设备相当于普通接口用于连接下级网络。当数据在母子设备间传递时，内核将会根据 802.1.q VLAN Tag 进行对应操作。母子设备之间是一对多的关系，一个母设备可以有多个子设备，一个子设备只有一个母设备。当一个子设备有一包数据需要发送时，数据将被加入 VLAN Tag 然后从母设备发送出去。当母设备收到一包数据时，它将会分析其中的 VLAN Tag，如果有对应的子设备存在，则把数据转发到那个子设备上并根据设置移除 VLAN Tag，否则丢弃该数据。在某些设置下，VLAN Tag 可以不被移除以满足某些监听程序的需要，如 DHCP 服务程序。举例说明如下：eth0 作为母设备创建一个 ID 为 100 的子设备 eth0.100。此时如果有程序要求从 eth0.100 发送一包数据，数据将被打上 VLAN 100 的 Tag 从 eth0 发送出去。如果 eth0 收到一包数据，VLAN Tag 是 100，数据将被转发到 eth0.100 上，并根据设置决定是否移除 VLAN Tag。如果 eth0 收到一包包含 VLAN Tag 101 的数据，其将被丢弃。上述过程隐含以下事实：对于寄主 Linux 系统来说，母设备只能用来收数据，子设备只能用来发送数据。和 Bridge 一样，母子设备的数据也是有方向的，子设备收到的数据不会进入母设备，同样母设备上请求发送的数据不会被转到子设备上。可以把 VLAN 母子设备作为一个整体想象为现实世界中的 802.1.q 交换机，下级接口通过子设备连接到寄主 Linux 系统网络里，上级接口同过主设备连接到上级网络，当母设备是物理网卡时上级网络是外界真实网络，当母设备是另外一个 Linux 虚拟网络设备时上级网络仍然是寄主 Linux 系统网络。
 
@@ -41,7 +41,7 @@ TUN/TAP 设备是一种让用户态程序向内核协议栈注入数据的设备
 
 图 3 .TAP 设备和 VETH 设备工作过程
 
-![](https://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/image007.jpg)
+![](source/3.jpg)
 
 如图所示，当一个 TAP 设备被创建时，在 Linux 设备文件目录下将会生成一个对应 char 设备，用户程序可以像打开普通文件一样打开这个文件进行读写。当执行 write()操作时，数据进入 TAP 设备，此时对于 Linux 网络层来说，相当于 TAP 设备收到了一包数据，请求内核接受它，如同普通的物理网卡从外界收到一包数据一样，不同的是其实数据来自 Linux 上的一个用户程序。Linux 收到此数据后将根据网络配置进行后续处理，从而完成了用户程序向 Linux 内核网络层注入数据的功能。当用户程序执行 read()请求时，相当于向内核查询 TAP 设备上是否有需要被发送出去的数据，有的话取出到用户程序里，完成 TAP 设备的发送数据功能。针对 TAP 设备的一个形象的比喻是：使用 TAP 设备的应用程序相当于另外一台计算机，TAP 设备是本机的一个网卡，他们之间相互连接。应用程序通过 read()/write()操作，和本机网络核心进行通讯。
 
@@ -55,7 +55,7 @@ VETH 设备总是成对出现，送到一端请求发送的数据总是从另一
 
 图 4 .ARP from vlan100 child device
 
-![](https://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/image009.jpg)
+![](source/4.jpg)
 
 如图所示，当用户尝试 ping 192.168.100.3 时，Linux 将会根据路由表，从 vlan100 子设备发出 ARP 报文，具体过程如下：
 
@@ -85,7 +85,7 @@ VETH 设备总是成对出现，送到一端请求发送的数据总是从另一
 
 图 5 .ARP from vlan200 child device
 
-![](https://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/image011.jpg)
+![](source/5.jpg)
 
 和前面情况类似，区别是 VLAN ID 是 200，对端的 vlan200 子设备设置为 reorder_hdr = 0，表示此设备被要求保留收到的报文中的 VLAN Tag。此时子设备会收到 ARP 报文，但是带了 VLAN ID 200 的 Tag，既 ARP@vlan200。
 
@@ -93,7 +93,7 @@ VETH 设备总是成对出现，送到一端请求发送的数据总是从另一
 
 图 5 .ARP from central bridge
 
-![](https://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/image013.jpg)
+![](source/6.jpg)
 
 当 bridge0 拥有 IP 时，通过 Linux 路由表用户程序可以直接将 ARP 报文发向 bridge0。这时 tap0 和外部网络都能收到 ARP，但 VLAN 子设备由于 VLAN ID 过滤的原因，将收不到 ARP 信息。
 
@@ -101,7 +101,7 @@ VETH 设备总是成对出现，送到一端请求发送的数据总是从另一
 
 图 6 .ARP from external network
 
-![](https://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/image015.jpg)
+![](source/7.jpg)
 
 当外部网络连接在一个支持 VLAN 并且对应端口为 vlan200 时，此情况会发生。此时所有的 VLAN ID 为 200 的 VLAN 子设备都将接受到报文，如果设置 reorder_hdr=0 则会收到带 Tag 的 ARP@vlan200。
 
@@ -109,7 +109,7 @@ VETH 设备总是成对出现，送到一端请求发送的数据总是从另一
 
 图 7 .ping from TAP device
 
-![](https://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/image017.jpg)
+![](source/8.jpg)
 
 给 tap0 赋予 IP 并加入路由，此时再 Ping 其对应网段的未知 IP 会产生 ARP 发送请求。需要注意的是此时由于 tap0 上存在的是发送而不是接收请求，因此 ARP 报文不会被转发到桥上，从而什么也不会发生。图中右边画了一个类似情况：从 vlan200 子设备发送 ARP 请求。由于缺少 VETH 设备反转请求方向，因此报文也不会被转发到桥上，而是直接通过物理网卡发往外部网络。
 
@@ -117,7 +117,7 @@ VETH 设备总是成对出现，送到一端请求发送的数据总是从另一
 
 图 8 .file operation on TAP device
 
-![](https://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/image019.jpg)
+![](source/9.jpg)
 
 用户程序指定 tap0 设备发送报文有两种方式：socket 和 file operation。当用 socket_raw 标志新建 socket 并指定设备编号时，可以要求内核将报文从 tap0 发送。但和前面的 ping from tap0 情况类似，由于报文方向问题，消息并不会被转发到 bridge0 上。当用 open()方式打开 tap 设备文件时，情况有所不同。当执行 write()操作时，内核认为 tap0 收到了报文，从而会触发转发动作，bridge0 将收到它。如果发送的报文如图所示，是一个以 A 为目的地的携带 VLAN ID 100 Tag 的单点报文，bridge0 将会找到对应的设备进行转发，对应的 VLAN 子设备将收到没有 VLAN ID 100 Tag 的报文。
 

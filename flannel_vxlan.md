@@ -45,7 +45,7 @@ Flannel\(v0.7+\)支持接入不同的`backend`来搭建Overlay网络，如:
 >
 > VNI=1000可能对应了171.30.0.0/16, 而VNI=1001可能对应了172.31.0.0/16
 
-![](/assets/vxlan.png)
+![](source/vxlan.png)
 
 # Linux内核的vxlan支持
 
@@ -72,7 +72,7 @@ Linux内核支持vxlan意味着linux系统可以为主机内的虚拟网络提�
 
 图2. 预期的网络拓扑
 
-![](/assets/expected-network-topography-vxlan.png)
+![](source/vxlan2.png)
 
 基于vxlan手动搭建Docker Overlay Network可以分为以下几步：
 
@@ -265,7 +265,6 @@ PING 192.1.78.2 (192.1.78.2) 56(84) bytes of data.
 64 bytes from 192.1.78.2: icmp_seq=1 ttl=63 time=1.34 ms
 ```
 
-![](/assets/wanmei.jpeg)
 
 # Flannel中vxlan backend实现
 
