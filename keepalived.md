@@ -278,38 +278,38 @@ virtual server可以以下面三种的任意一种来配置:
 
 ```
 virtual_server 192.168.1.2 80 {                     #设置一个virtual server: VIP:Vport
-delay_loop 3                                                  # service polling的delay时间，即服务轮询的时间间隔
+delay_loop 3                                        #service polling的delay时间，即服务轮询的时间间隔
  
-lb_algo rr|wrr|lc|wlc|lblc|sh|dh                        #LVS调度算法
-lb_kind NAT|DR|TUN                                      #LVS集群模式                     
-persistence_timeout 120                                #会话保持时间（秒为单位），即以用户在120秒内被分配到同一个后端realserver
-persistence_granularity <NETMASK>              #LVS会话保持粒度，ipvsadm中的-M参数，默认是0xffffffff，即每个客户端都做会话保持
-protocol TCP                                                  #健康检查用的是TCP还是UDP
-ha_suspend                                                   #suspendhealthchecker’s activity
-virtualhost <string>                                       #HTTP_GET做健康检查时，检查的web服务器的虚拟主机（即host：头）
+lb_algo rr|wrr|lc|wlc|lblc|sh|dh                    #LVS调度算法
+lb_kind NAT|DR|TUN                                  #LVS集群模式                     
+persistence_timeout 120                             #会话保持时间（秒为单位），即以用户在120秒内被分配到同一个后端realserver
+persistence_granularity <NETMASK>                   #LVS会话保持粒度，ipvsadm中的-M参数，默认是0xffffffff，即每个客户端都做会话保持
+protocol TCP                                        #健康检查用的是TCP还是UDP
+ha_suspend                                          #suspendhealthchecker’s activity
+virtualhost <string>                                #HTTP_GET做健康检查时，检查的web服务器的虚拟主机（即host：头）
  
 sorry_server <IPADDR> <PORT>                 #备用机，就是当所有后端realserver节点都不可用时，就用这里设置的，也就是临时把所有的请求都发送到这里啦
  
-real_server <IPADDR> <PORT>                    #后端真实节点主机的权重等设置，主要，后端有几台这里就要设置几个
+real_server <IPADDR> <PORT>                  #后端真实节点主机的权重等设置，主要，后端有几台这里就要设置几个
 {
-weight 1                                                         #给每台的权重，0表示失效(不知给他转发请求知道他恢复正常)，默认是1
+weight 1                                                      #给每台的权重，0表示失效(不知给他转发请求知道他恢复正常)，默认是1
 inhibit_on_failure                                            #表示在节点失败后，把他权重设置成0，而不是冲IPVS中删除
  
-notify_up <STRING> | <QUOTED-STRING>  #检查服务器正常(UP)后，要执行的脚本
-notify_down <STRING> | <QUOTED-STRING> #检查服务器失败(down)后，要执行的脚本
-HTTP_GET                                                     #健康检查方式
+notify_up <STRING> | <QUOTED-STRING>         #检查服务器正常(UP)后，要执行的脚本
+notify_down <STRING> | <QUOTED-STRING>       #检查服务器失败(down)后，要执行的脚本
+HTTP_GET                                                   #健康检查方式
 {
-url {                                                                #要坚持的URL，可以有多个
-path /                                                             #具体路径
+url {                                                      #要坚持的URL，可以有多个
+path /                                                     #具体路径
 digest <STRING>                                           
 status_code 200                                            #返回状态码
 }
 connect_port 80                                            #监控检查的端口
  
 bindto <IPADD>                                             #健康检查的IP地址
-connect_timeout   3                                       #连接超时时间
-nb_get_retry 3                                               #重连次数
-delay_before_retry 2                                      #重连间隔
+connect_timeout   3                                        #连接超时时间
+nb_get_retry 3                                             #重连次数
+delay_before_retry 2                                       #重连间隔
 } # END OF HTTP_GET|SSL_GET
  
 #下面是常用的健康检查方式，健康检查方式一共有HTTP_GET|SSL_GET|TCP_CHECK|SMTP_CHECK|MISC_CHECK这些
@@ -331,7 +331,6 @@ bindto <IP ADDRESS>
 connect_timeout <INTEGER>
 retry <INTEGER>
 delay_before_retry <INTEGER>
-# “smtp HELO”ž|·-ëê§Œà”
 helo_name <STRING>|<QUOTED-STRING>
 } #SMTP_CHECK
  
@@ -410,7 +409,9 @@ vrrp_instance VI_1 {
         172.16.60.129         #VIP地址
     }
 }
- 
+```
+
+```
 ==========web-slave 从节点的配置==========
 [root@web-slave ~]# cd /etc/keepalived/
 [root@web-slave keepalived]# cp keepalived.conf keepalived.conf.bak
