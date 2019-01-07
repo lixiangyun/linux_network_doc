@@ -140,8 +140,8 @@ LVS集群的特点可以归结如下：
 后端服务器可运行任何支持TCP/IP的操作系统，包括Linux，各种Unix（如FreeBSD、Sun Solaris、HP Unix等），Mac/OS和Windows NT/2000等。
 负载调度器能够支持绝大多数的TCP和UDP协议：
 
-|-|-|
 |协议	|内 容|
+|-|-|
 |TCP	|HTTP，FTP，PROXY，SMTP，POP3，IMAP4，DNS，LDAP，HTTPS，SSMTP等|
 |UDP	|DNS，NTP，ICP，视频、音频流播放协议等 |
 
