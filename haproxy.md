@@ -35,7 +35,7 @@ haproxy实现了一种事件驱动、单一进程模型，此模型支持非常�
 ## 二、业务架构图
 
 现在我们以实际的业务架构图，来使用haproxy。业务架构图如下：
-![](https://images0.cnblogs.com/blog/62984/201508/221316404253381.png)
+![](source/221316404253381.png)
 
 这个是基本的业务架构图，对外是haproxy这台服务器。目前暂时没有考虑haproxy的单点故障问题，这个问题我们会在后续的keepalived文章中会进行介绍。
 
@@ -277,20 +277,20 @@ http://192.168.5.171:1080/stats
 ```
 
 输入用户名和密码后，haproxy监控后台服务器的情况，如下：
-![](https://images0.cnblogs.com/blog/62984/201508/221317143784221.png)
+![](source/221317143784221.png)
 
 现在我们来看看haprxoy所有后台服务器的情况，先来看看dgserver组，如下：
-![](https://images0.cnblogs.com/blog/62984/201508/221317161443495.png)
+![](source/221317161443495.png)
 
 通过上图，我们可以看到dgserver组，目前web1这台服务器处于宕机状态。也就是说haprxoy不会把客户端的请求分发到web1服务器上了。
 
 现在我们再来看看171server组，如下：
-![](https://images0.cnblogs.com/blog/62984/201508/221317186134682.png)
+![](source/221317186134682.png)
 
 通过上图，我们可以很明显的看出171server组的服务器目前都是正常运行的。
 
 8090组服务器的情况，如下：
-![](https://images0.cnblogs.com/blog/62984/201508/221317205196998.png)
+![](source/221317205196998.png)
 
 通过上图，我们可以看到8090组的服务器也是有一台是宕机的。
 
@@ -306,15 +306,15 @@ haprxoy配置完毕并正常启动后，我们现在来根据业务的要求进�
 curl http://dg.test.com
 ```
 
-![](https://images0.cnblogs.com/blog/62984/201508/221317223942071.png)
-![](https://images0.cnblogs.com/blog/62984/201508/221317239566114.png)
+![](source/221317223942071.png)
+![](source/221317239566114.png)
 
 通过上图，我们可以看到当我们使用dg.test.com这个域名访问时，haproxy确实为我们进行跳转了，而且跳转到了192.168.5.174这台服务器上。
 
 因为考虑到客户端session会话的问题，所以我们在配置haproxy负载均衡没有使用roundrobin轮询的方法，而是使用source方法。所以haproxy目前没有把请求分发到192.168.5.171:8080、192.168.5.178:8080这两台服务器上。
 
 现在我们访问ilanni.test.com，如下：
-![](https://images0.cnblogs.com/blog/62984/201508/221317262854259.png)
+![](source/221317262854259.png)
 
 ## 通过上图，我们可以看到访问不同的域名，haproxy把请求分发到不同的服务器上。
 
@@ -325,7 +325,7 @@ curl http://dg.test.com
 curl http://192.168.5.171
 ```
 
-![](https://images0.cnblogs.com/blog/62984/201508/221317274888959.png)
+![](source/221317274888959.png)
 
 通过上图，我们可以很明显的看到，第一次使用`curl http://192.168.5.171`访问时，haproxy是把请求分发171server组的192.168.5.174这台机器上。而第二次访问时，把请求分发171server组的192.168.5.178这台机器上。
 
@@ -339,7 +339,7 @@ curl http://dg.test.com:8090
 curl http://ilanni.test.com:8090
 ```
 
-![](https://images0.cnblogs.com/blog/62984/201508/221317285975633.png)
+![](source/221317285975633.png)
 
 通过上图，我们可以很明显的看到客户端在通过`dg.test.com:8090`和`ilanni.test.com:8090`进行访问时，haproxy确实把请求分发到了8090组服务器上的`192.168.5.178:8090`上。
 
@@ -350,14 +350,14 @@ curl http://ilanni.test.com:8090
 curl http://test.test.com
 ```
 
-![](https://images0.cnblogs.com/blog/62984/201508/221317303311962.png)
+![](source/221317303311962.png)
 
 通过上图，我们可以很明显的看出haproxy把`test.test.com`的请求转发到了默认服务器组的`192.168.5.178:8080`上。
 
 ### 6.5 测试多ACL匹配
 
 要测试默认跳转，我们先切换到`192.168.5.140`这台机器上，然后访问`http://192.168.5.171`。如下：
-![](https://images0.cnblogs.com/blog/62984/201508/221317316603934.png)
+![](source/221317316603934.png)
 
 通过上图，我们可以很明显的看到在`192.168.5.171`这台机器上访问`http://192.168.5.171`时，haproxy确实把请求分发到`www.ilanni.com`这台机器上。
 
