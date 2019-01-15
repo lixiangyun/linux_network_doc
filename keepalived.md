@@ -20,7 +20,7 @@ keepalived可提供vrrp以及health-check功能，可以只用它提供双机浮
 
 下图是keepalived的组件图
 
-![](https://images2015.cnblogs.com/blog/907596/201701/907596-20170109100653431-1705316810.png)
+![](source/keepalive.png)
 
 keepalived也是模块化设计，不同模块复杂不同的功能，它主要有三个模块，分别是core、check和VRRP，其中：
 - core模块：为keepalived的核心组件，负责主进程的启动、维护以及全局配置文件的加载和解析；
